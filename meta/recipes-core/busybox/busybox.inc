@@ -1,3 +1,4 @@
+# Unverified after rebase with conflicts
 SUMMARY = "Tiny versions of many common UNIX utilities in a single small executable."
 DESCRIPTION = "BusyBox combines tiny versions of many common UNIX utilities into a single small executable. It provides minimalist replacements for most of the utilities you usually find in GNU fileutils, shellutils, etc. The utilities in BusyBox generally have fewer options than their full-featured GNU cousins; however, the options that are included provide the expected functionality and behave very much like their GNU counterparts. BusyBox provides a fairly complete POSIX environment for any small or embedded system."
 HOMEPAGE = "http://www.busybox.net"
@@ -177,6 +178,10 @@ do_install () {
 	if [ "${base_sbindir}" != "/sbin" ]; then
 		sed -i "s:^/sbin/:${base_sbindir}/:" busybox.links*
 	fi
+	if [ "${base_bindir}" != "/bin" ]; then
+		sed "s:^/bin/:${base_bindir}/:" busybox.links > busybox.links.new
+		mv busybox.links.new busybox.links
+	fi
 
 	install -d ${D}${sysconfdir}/init.d
 
@@ -295,12 +300,15 @@ python () {
         d.setVarFlag('ALTERNATIVE_LINK_NAME', 'syslog-startup-conf', '%s/syslog-startup.conf' % (d.getVar('sysconfdir', True)))
         d.setVarFlag('ALTERNATIVE_TARGET', 'syslog-startup-conf', '%s/syslog-startup.conf.%s' % (d.getVar('sysconfdir', True), d.getVar('BPN', True)))
 }
+#ALTERNATIVE_TARGET = "${base_bindir}/busybox"
 
 python do_package_prepend () {
     # We need to load the full set of busybox provides from the /etc/busybox.links
     # Use this to see the update-alternatives with the right information
 
     dvar = d.getVar('D', True)
+    sysconfdir = d.getVar('sysconfdir', True)
+    base_bindir = d.getVar('base_bindir', True)
     pn = d.getVar('PN', True)
     def set_alternative_vars(links, target):
         f = open('%s%s' % (dvar, links), 'r')
@@ -317,11 +325,11 @@ python do_package_prepend () {
         f.close()
         return
 
-    if os.path.exists('%s/etc/busybox.links' % (dvar)):
-        set_alternative_vars("/etc/busybox.links", "/bin/busybox")
+    if os.path.exists('%s/%s/busybox.links' % (dvar, sysconfdir)):
+        set_alternative_vars("%s/busybox.links" % sysconfdir, "%s/busybox" % base_bindir)
     else:
-        set_alternative_vars("/etc/busybox.links.nosuid", "/bin/busybox.nosuid")
-        set_alternative_vars("/etc/busybox.links.suid", "/bin/busybox.suid")
+        set_alternative_vars("%s/busybox.links.nosuid" % sysconfdir, "%s/busybox.nosuid" % base_bindir)
+        set_alternative_vars("%s/busybox.links.suid" % sysconfdir, "%s/busybox.suid" % base_bindir)
 }
 
 pkg_postinst_${PN} () {
@@ -367,19 +375,19 @@ pkg_prerm_${PN} () {
 	# providing its files, this will make update-alternatives work, but the update-rc.d part
 	# for syslog, httpd and/or udhcpd will fail if there is no other package providing sh
 	tmpdir=`mktemp -d /tmp/busyboxrm-XXXXXX`
-	ln -s /bin/busybox $tmpdir/[
-	ln -s /bin/busybox $tmpdir/test
-	ln -s /bin/busybox $tmpdir/head
-	ln -s /bin/busybox $tmpdir/sh
-	ln -s /bin/busybox $tmpdir/basename
-	ln -s /bin/busybox $tmpdir/echo
-	ln -s /bin/busybox $tmpdir/mv
-	ln -s /bin/busybox $tmpdir/ln
-	ln -s /bin/busybox $tmpdir/dirname
-	ln -s /bin/busybox $tmpdir/rm
-	ln -s /bin/busybox $tmpdir/sed
-	ln -s /bin/busybox $tmpdir/sort
-	ln -s /bin/busybox $tmpdir/grep
+	ln -s ${base_bindir}/busybox $tmpdir/[
+	ln -s ${base_bindir}/busybox $tmpdir/test
+	ln -s ${base_bindir}/busybox $tmpdir/head
+	ln -s ${base_bindir}/busybox $tmpdir/sh
+	ln -s ${base_bindir}/busybox $tmpdir/basename
+	ln -s ${base_bindir}/busybox $tmpdir/echo
+	ln -s ${base_bindir}/busybox $tmpdir/mv
+	ln -s ${base_bindir}/busybox $tmpdir/ln
+	ln -s ${base_bindir}/busybox $tmpdir/dirname
+	ln -s ${base_bindir}/busybox $tmpdir/rm
+	ln -s ${base_bindir}/busybox $tmpdir/sed
+	ln -s ${base_bindir}/busybox $tmpdir/sort
+	ln -s ${base_bindir}/busybox $tmpdir/grep
 	export PATH=$PATH:$tmpdir
 }
 
@@ -387,7 +395,7 @@ pkg_prerm_${PN}-syslog () {
 	# remove syslog
 	if test "x$D" = "x"; then
 		if test "$1" = "upgrade" -o "$1" = "remove"; then
-			/etc/init.d/syslog stop
+			${sysconfdir}/init.d/syslog stop
 		fi
 	fi
 }
