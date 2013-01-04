@@ -59,12 +59,12 @@ do_install_append_class-native() {
 }
 
 pkg_postinst_${PN} () {
-#!/bin/sh
+#!${base_bindir}/sh
 if [ "x$D" != "x" ] && [ -f $D${OPKGLIBDIR}/opkg/status ]; then
 	install -d $D${sysconfdir}/rcS.d
 
 	# this happens at S98 where our good 'ole packages script used to run
-	echo "#!/bin/sh
+	echo "#!${base_bindir}/sh
 [ -e ${sysconfdir}/default/postinst ] && . ${sysconfdir}/default/postinst
 if [ \"\$POSTINST_LOGGING\" = \"1\" ]; then
     opkg-cl configure >\$LOGFILE 2>&1
