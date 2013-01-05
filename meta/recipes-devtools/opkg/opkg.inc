@@ -23,6 +23,7 @@ OPKGLIBDIR = "${target_localstatedir}/lib"
 
 SHARED_EXTRA_OECONF = "\
   --with-opkglibdir=${OPKGLIBDIR} \
+  --with-opkgetcdir=${sysconfdir} \
   --disable-gpg \
   --disable-curl \
   --disable-openssl \
