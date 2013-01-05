@@ -105,9 +105,9 @@ python () {
                   ("\\n".join(["CROSS_COMPILER_PREFIX=\"${TARGET_PREFIX}\"",
                         "UCLIBC_EXTRA_CFLAGS=\"${UCLIBC_EXTRA_CFLAGS}\"",
                          "KERNEL_HEADERS=\"${STAGING_INCDIR}\"",
-                         "RUNTIME_PREFIX=\"/\"",
+                         "RUNTIME_PREFIX=\"/${base_prefix}\"",
                          "DEVEL_PREFIX=\"/${prefix}\"",
-                         "SHARED_LIB_LOADER_PREFIX=\"/lib\"",
+                         "SHARED_LIB_LOADER_PREFIX=\"${base_libdir}\"",
                         ])
                   ))
     d.setVar('configmangle_append',
