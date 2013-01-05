@@ -349,15 +349,15 @@ pkg_postinst_${PN} () {
 				while read link; do
 					if test ! -e "$link"; then
 						case "$link" in
-							/*/*/*)
-								to="../../bin/busybox$suffix"
-								;;
-							/bin/*)
-								to="busybox$suffix"
-								;;
-							/*/*)
-								to="../bin/busybox$suffix"
-								;;
+                                                        # If symlink target is in the same dir,
+                                                        # optimize and make relative symlink
+                                                        ${base_bindir}*)
+                                                                to="busybox$suffix"
+                                                                ;;
+                                                        # Otherwise, just make absolute symlink
+                                                        *)
+                                                                to="${base_bindir}/busybox$suffix"
+                                                                ;;
 						esac
 						# we can use busybox here because even if we are using splitted busybox
 						# we've made a symlink from /bin/busybox to /bin/busybox.nosuid.
