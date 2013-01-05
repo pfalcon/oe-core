@@ -33,5 +33,5 @@ FILES_${PN}-dev += "\
         ${libdir}/crtreloc*.o \
         ${includedir}/*.h ${includedir}/*/*.h \
        "
-FILES_${PN} = "${sysconfdir} ${uclibc_baselibs} /sbin/ldconfig \
+FILES_${PN} = "${sysconfdir} ${uclibc_baselibs} ${base_prefix}/sbin/ldconfig \
                ${libexecdir} ${datadir}/zoneinfo ${libdir}/locale"
