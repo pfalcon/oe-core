@@ -18,7 +18,7 @@ FILES_ldd = "${bindir}/ldd"
 FILES_uclibc-utils = "${bindir} ${sbindir}"
 FILES_uclibc-utils-dbg += "${bindir}/.debug ${sbindir}/.debug"
 FILES_uclibc-gconv = "${libdir}/gconv"
-FILES_uclibc-thread-db = "${base_libdir}/libthread_db*"
+FILES_uclibc-thread-db-dev = "${base_libdir}/libthread_db*"
 FILES_uclibc-argp = "${base_libdir}/libuargp-*.so ${base_libdir}/libuargp*.so.*"
 FILES_uclibc-backtrace = "${base_libdir}/libubacktrace-*.so ${base_libdir}/libubacktrace*.so.*"
 
