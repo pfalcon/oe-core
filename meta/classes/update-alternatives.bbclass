@@ -231,12 +231,13 @@ python populate_packages_updatealternatives () {
 
             bb.note('adding update-alternatives calls to postinst/postrm for %s' % pkg)
             bb.note('%s' % alt_setup_links)
-            postinst = d.getVar('pkg_postinst_%s' % pkg, True) or '#!/bin/sh\n'
+            shebang = bb.data.expand('#!${base_bindir}/sh\n', d)
+            postinst = d.getVar('pkg_postinst_%s' % pkg, True) or shebang
             postinst += alt_setup_links
             d.setVar('pkg_postinst_%s' % pkg, postinst)
 
             bb.note('%s' % alt_remove_links)
-            postrm = d.getVar('pkg_postrm_%s' % pkg, True) or '#!/bin/sh\n'
+            postrm = d.getVar('pkg_postrm_%s' % pkg, True) or shebang
             postrm += alt_remove_links
             d.setVar('pkg_postrm_%s' % pkg, postrm)
 }
