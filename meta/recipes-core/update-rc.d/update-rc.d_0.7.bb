@@ -25,6 +25,7 @@ do_compile() {
 do_install() {
 	install -d ${D}${sbindir}
 	install -m 0755 ${S}/update-rc.d ${D}${sbindir}/update-rc.d
+	sed -i -e 's,"/etc/,"${sysconfdir}/,' ${D}${sbindir}/update-rc.d
 }
 
 BBCLASSEXTEND = "native"
