@@ -167,7 +167,8 @@ fakeroot python populate_packages_prepend () {
         """
         preinst = d.getVar('pkg_preinst_%s' % pkg, True) or d.getVar('pkg_preinst', True)
         if not preinst:
-            preinst = '#!/bin/sh\n'
+            shebang = bb.data.expand('#!${base_bindir}/sh\n', d)
+            preinst = shebang
         preinst += 'bbnote () {\n%s}\n' % d.getVar('bbnote', True)
         preinst += 'bbwarn () {\n%s}\n' % d.getVar('bbwarn', True)
         preinst += 'bbfatal () {\n%s}\n' % d.getVar('bbfatal', True)
