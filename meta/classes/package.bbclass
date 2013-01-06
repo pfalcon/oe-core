@@ -144,10 +144,11 @@ def do_split_packages(d, root, file_regex, output_pattern, description, postinst
     packages = d.getVar('PACKAGES', True).split()
     split_packages = []
 
+    shebang = bb.data.expand('#!${base_bindir}/sh\n', d)
     if postinst:
-        postinst = '#!/bin/sh\n' + postinst + '\n'
+        postinst = shebang + postinst + '\n'
     if postrm:
-        postrm = '#!/bin/sh\n' + postrm + '\n'
+        postrm = shebang + postrm + '\n'
     if not recursive:
         objs = os.listdir(dvar + root)
     else:
@@ -1233,7 +1234,7 @@ emit_pkgdata[dirs] = "${PKGDESTWORK}/runtime ${PKGDESTWORK}/runtime-reverse"
 
 ldconfig_postinst_fragment() {
 if [ x"$D" = "x" ]; then
-	if [ -x /sbin/ldconfig ]; then /sbin/ldconfig ; fi
+	if [ -x ${base_sbindir}/ldconfig ]; then ${base_sbindir}/ldconfig ; fi
 fi
 }
 
@@ -1480,8 +1481,9 @@ python package_do_shlibs() {
         if needs_ldconfig and use_ldconfig:
             bb.debug(1, 'adding ldconfig call to postinst for %s' % pkg)
             postinst = d.getVar('pkg_postinst_%s' % pkg, True)
+            shebang = bb.data.expand('#!${base_bindir}/sh\n', d)
             if not postinst:
-                postinst = '#!/bin/sh\n'
+                postinst = shebang
             postinst += d.getVar('ldconfig_postinst_fragment', True)
             d.setVar('pkg_postinst_%s' % pkg, postinst)
 
