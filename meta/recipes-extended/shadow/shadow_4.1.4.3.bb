@@ -42,6 +42,11 @@ EXTRA_OECONF_libc-uclibc += "--with-nscd=no"
 # libcrypt. This breaks chsh.
 BUILD_LDFLAGS += "${@base_contains('DISTRO_FEATURES', 'pam', base_contains('DISTRO_FEATURES', 'libc-crypt',  '-lcrypt', '', d), '', d)}"
 
+CFLAGS += '-DPASSWD_FILE=\\"${sysconfdir}/passwd\\" \
+           -DGROUP_FILE=\\"${sysconfdir}/group\\" \
+           -DSHADOW_FILE=\\"${sysconfdir}/shadow\\" \
+           -DSGROUP_FILE=\\"${sysconfdir}/gshadow\\"'
+
 PAM_PLUGINS = "libpam-runtime \
                pam-plugin-faildelay \
                pam-plugin-securetty \
