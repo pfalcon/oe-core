@@ -49,7 +49,7 @@ OVERRIDES_append = ":${TARGET_ARCH}-${TARGET_OS}"
 
 do_configure_prepend() {
         if [ -e ${S}/elf/ldd.bash.in ]; then
-                sed -e "s#@BASH@#/bin/sh#" -i ${S}/elf/ldd.bash.in
+                sed -e "s#@BASH@#${base_bindir}/sh#" -i ${S}/elf/ldd.bash.in
         fi
 }
 
@@ -57,7 +57,7 @@ do_configure_prepend() {
 
 # indentation removed on purpose
 locale_base_postinst() {
-#!/bin/sh
+#!${base_bindir}/sh
 
 if [ "x$D" != "x" ]; then
 	exit 1
@@ -76,7 +76,7 @@ rm -rf ${TMP_LOCALE}
 
 # indentation removed on purpose
 locale_base_postrm() {
-#!/bin/sh
+#!${base_bindir}/sh
 
 rm -rf ${TMP_LOCALE}
 mkdir -p ${TMP_LOCALE}
