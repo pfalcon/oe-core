@@ -68,21 +68,22 @@ python populate_packages_updatercd () {
         localdata.setVar("OVERRIDES", "%s:%s" % (pkg, overrides))
         bb.data.update_data(localdata)
 
+        shebang = bb.data.expand('#!${base_bindir}/sh\n', d)
         postinst = d.getVar('pkg_postinst_%s' % pkg, True)
         if not postinst:
-            postinst = '#!/bin/sh\n'
+            postinst = shebang
         postinst += localdata.getVar('updatercd_postinst', True)
         d.setVar('pkg_postinst_%s' % pkg, postinst)
 
         prerm = d.getVar('pkg_prerm_%s' % pkg, True)
         if not prerm:
-            prerm = '#!/bin/sh\n'
+            prerm = shebang
         prerm += localdata.getVar('updatercd_prerm', True)
         d.setVar('pkg_prerm_%s' % pkg, prerm)
 
         postrm = d.getVar('pkg_postrm_%s' % pkg, True)
         if not postrm:
-                postrm = '#!/bin/sh\n'
+                postrm = shebang
         postrm += localdata.getVar('updatercd_postrm', True)
         d.setVar('pkg_postrm_%s' % pkg, postrm)
 
