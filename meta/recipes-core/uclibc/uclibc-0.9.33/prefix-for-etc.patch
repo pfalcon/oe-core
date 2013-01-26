@@ -1,0 +1,84 @@
+There're 2 usecases for install uclibc with non-standard prefix:
+1) Installing completely independent system alongside existing
+one. In this case, we do want all config files (including /etc)
+separate. 2) Installing independent system which will still reuse
+existing standard files in /etc.
+
+The patch below covers case 1 and doesn't cover case 2. For the latter,
+separate prefix define for /etc should be introduced and passed along
+uclibc build system. Well, this patch is written for case 1, and just
+uses existing __RUNTIME_PREFIX__ define.
+
+--- git/include/paths.h.org	2013-01-05 06:20:18.000000000 +0200
++++ git/include/paths.h	2013-01-05 06:21:00.617648639 +0200
+@@ -44,21 +44,21 @@
+ #define	_PATH_DEVDB	"/var/run/dev.db"
+ #define	_PATH_DEVNULL	"/dev/null"
+ #define	_PATH_DRUM	"/dev/drum"
+-#define	_PATH_GSHADOW	"/etc/gshadow"
++#define	_PATH_GSHADOW	__RUNTIME_PREFIX__ "/etc/gshadow"
+ #define	_PATH_KLOG	"/proc/kmsg"
+ #define	_PATH_KMEM	"/dev/kmem"
+ #define	_PATH_LASTLOG	"/var/log/lastlog"
+ #define	_PATH_MAILDIR	"/var/mail"
+ #define	_PATH_MAN	"/usr/share/man"
+ #define	_PATH_MEM	"/dev/mem"
+-#define	_PATH_MNTTAB	"/etc/fstab"
+-#define	_PATH_MOUNTED	"/etc/mtab"
+-#define	_PATH_NOLOGIN	"/etc/nologin"
++#define	_PATH_MNTTAB	__RUNTIME_PREFIX__ "/etc/fstab"
++#define	_PATH_MOUNTED	__RUNTIME_PREFIX__ "/etc/mtab"
++#define	_PATH_NOLOGIN	__RUNTIME_PREFIX__ "/etc/nologin"
+ #define	_PATH_PRESERVE	"/var/lib"
+ #define	_PATH_RWHODIR	"/var/spool/rwho"
+ #define	_PATH_SENDMAIL	"/usr/sbin/sendmail"
+-#define	_PATH_SHADOW	"/etc/shadow"
+-#define	_PATH_SHELLS	"/etc/shells"
++#define	_PATH_SHADOW	__RUNTIME_PREFIX__ "/etc/shadow"
++#define	_PATH_SHELLS	__RUNTIME_PREFIX__ "/etc/shells"
+ #define	_PATH_TTY	"/dev/tty"
+ #define	_PATH_UNIX	"/boot/vmlinux"
+ #define _PATH_UTMP	"/var/run/utmp"
+@@ -66,8 +66,8 @@
+ #define _PATH_WTMP	"/var/log/wtmp"
+ 
+ #ifdef _LIBC
+-#define _PATH_PASSWD	"/etc/passwd"
+-#define _PATH_GROUP	"/etc/group"
++#define _PATH_PASSWD	__RUNTIME_PREFIX__ "/etc/passwd"
++#define _PATH_GROUP	__RUNTIME_PREFIX__ "/etc/group"
+ #endif
+ 
+ /* Provide trailing slash, since mostly used for building pathnames. */
+--- git/include/netdb.h.org	2013-01-05 06:24:27.000000000 +0200
++++ git/include/netdb.h	2013-01-26 21:10:24.192378548 +0200
+@@ -43,12 +43,12 @@
+ #include <bits/netdb.h>
+ 
+ /* Absolute file name for network data base files.  */
+-#define	_PATH_HEQUIV		"/etc/hosts.equiv"
+-#define	_PATH_HOSTS		"/etc/hosts"
+-#define	_PATH_NETWORKS		"/etc/networks"
+-#define	_PATH_NSSWITCH_CONF	"/etc/nsswitch.conf"
+-#define	_PATH_PROTOCOLS		"/etc/protocols"
+-#define	_PATH_SERVICES		"/etc/services"
++#define	_PATH_HEQUIV		__RUNTIME_PREFIX__ "/etc/hosts.equiv"
++#define	_PATH_HOSTS		__RUNTIME_PREFIX__ "/etc/hosts"
++#define	_PATH_NETWORKS		__RUNTIME_PREFIX__ "/etc/networks"
++#define	_PATH_NSSWITCH_CONF	__RUNTIME_PREFIX__ "/etc/nsswitch.conf"
++#define	_PATH_PROTOCOLS		__RUNTIME_PREFIX__ "/etc/protocols"
++#define	_PATH_SERVICES		__RUNTIME_PREFIX__ "/etc/services"
+ 
+ 
+ __BEGIN_DECLS
+--- git/include/resolv.h.org	2013-01-05 06:24:27.000000000 +0200
++++ git/include/resolv.h	2013-01-26 21:21:08.790457802 +0200
+@@ -205,7 +205,7 @@
+  */
+ 
+ #ifndef _PATH_RESCONF
+-#define _PATH_RESCONF        "/etc/resolv.conf"
++#define _PATH_RESCONF        __RUNTIME_PREFIX__ "/etc/resolv.conf"
+ #endif
+ 
+ struct res_sym {
