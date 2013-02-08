@@ -1,0 +1,15 @@
+diff --git a/update-rc.d b/update-rc.d
+index ec50d15..bc5e9a2 100644
+--- a/update-rc.d
++++ b/update-rc.d
+@@ -161,8 +161,8 @@ if [ $dostart -eq 1 ]; then
+ 	#RUNLEVEL=`sed 's/.*\[\(.*\)\]/\1/' < /proc/1/cmdline`
+ 	RUNLEVEL=`runlevel | cut -d" " -f2`
+ 	if [ "x$RUNLEVEL" = "x" ]; then
+-		echo "Unable to determine current runlevel" >&2
+-		exit 1
++		echo "Warning: Unable to determine current runlevel, not starting $bn" >&2
++		dostart=0
+ 	fi
+ fi
+ 
